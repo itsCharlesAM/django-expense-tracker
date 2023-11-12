@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+
+<h1>transactions template</h1>
+
+<div>
+
+    <a href="{% url 'add_transaction' %}">Add Transaction</a>
+
+    <div>
+        {% for transaction in all_transactions %}
+        <div>
+            <a href="{% url 'edit_transaction' transaction.id %}">Edit</a>
+
+            <span>User: {{transaction.user_id.username}}</span>
+            <h5>{{transaction.id}} -- <a>{{transaction.description}}</a></h5>
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+
+</div>
+
+{% endblock content %}
