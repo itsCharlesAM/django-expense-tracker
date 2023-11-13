@@ -16,6 +16,7 @@ class User(models.Model):
 
 class Transaction(models.Model):
     id = models.BigAutoField(primary_key=True)
+    amount = models.FloatField(null=False, default=0)
     description = models.TextField(null=True, blank=True)
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     is_visible = models.BooleanField(default=True)
