@@ -7,12 +7,33 @@
 
 <div>
 
+    <div>
+        <h3>Select transaction type</h3>
+        <hr>
+
+        <div>
+            <div>
+                <a href="{% url 'transactions' %}">All</a>
+            </div>
+
+            <!-- {% for transaction in all_transactions %}
+            <div>
+                <a href="{% url 'transactions' %}?search={{transaction.type}}">{{transaction.get_type_display}}</a>
+                
+            {% endfor %}
+            </div> -->
+        </div>        
+    </div>
+    <h5>Number of transactions: {{transactions_count}}</h5>
+
     <a href="{% url 'add_transaction' %}">Add Transaction</a>
 
     <div>
         {% for transaction in all_transactions %}
         <div>
             <a href="{% url 'edit_transaction' transaction.id %}">Edit</a>
+            <a href="{% url 'delete_transaction' transaction.id %}">delete</a>
+
 
             <span>User: {{transaction.user_id.username}}</span>
             <h5>{{transaction.id}} -- <a>{{transaction.description}}</a></h5>
