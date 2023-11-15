@@ -3,7 +3,42 @@ from django.db.models import Q
 from django.http import HttpResponse
 from .models import Transaction
 from .forms import transaction_form
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+
 # Create your views here.
+
+
+def login_page(request):
+    req_username = None
+    req_password = None
+
+    if request.method == 'POST':
+        req_username = request.POST.get('username')
+        req_password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(username=req_username)
+        except:
+            messages.error(request, 'User does not exist')
+
+    user = authenticate(request, username=req_username, password=req_password)
+
+    if user is not None:
+        # login method creates session in database and browser
+        login(request, user)
+        return redirect('transactions')
+    else:
+        messages.error(request, 'Invalid username or password')
+
+    context = {}
+    return render(request, 'login.html', context)
+
+
+def logout_user(request):
+    logout(request)
+    return render(request, 'login.html')
 
 
 def show_all_transactions(request):

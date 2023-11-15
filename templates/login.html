@@ -1,0 +1,23 @@
+<div>
+    <form action="" method="POST">
+        {% csrf_token %} 
+
+        <!-- output the login error message -->
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tag %} class="{{ message.tag }}" {% endif %} > {{ message }}</li>
+                {% endfor %}
+        </ul>
+        {% endif %}
+        <!---->
+
+        <label>Username:</label>
+        <input type="text" name="username" placeholder="Enter username">
+
+        <label>Password:</label>
+        <input type="password" name="password" placeholder="Enter password">
+
+        <input type="submit" value="login">
+    </form>
+</div>

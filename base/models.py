@@ -1,13 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 
-class User(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=20, null=False)
-    first_name = models.CharField(max_length=20, null=False)
-    last_name = models.CharField(max_length=20, null=False)
+class User(User):
+    # id = models.BigAutoField(primary_key=True)
+    # username = models.CharField(max_length=20, null=False)
+    # first_name = models.CharField(max_length=20, null=False)
+    # last_name = models.CharField(max_length=20, null=False)
     balance = models.FloatField(null=False, default=0)
     is_visible = models.BooleanField(default=True)
     date_create = models.DateTimeField(auto_now_add=True)
