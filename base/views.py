@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from datetime import datetime
 # Create your views here.
 
 
@@ -45,9 +45,11 @@ def logout_user(request):
 # this will restrict the all_transactions page
 @login_required(login_url='login')
 def show_all_transactions(request):
+
     search_req = request.GET.get(
         'search',
     )
+    logged_user_id = request.user.id
 
     if str(search_req).__contains__("inc"):
         search_req = 1
@@ -56,10 +58,10 @@ def show_all_transactions(request):
 
     if search_req is not None:  # search
         all_transactions = Transaction.objects.filter(
-            Q(is_visible=True) & (Q(amount__icontains=search_req) | Q(description__icontains=search_req)), ).order_by('-date_create')
+            Q(is_visible=True) & Q(user=logged_user_id) & (Q(amount__icontains=search_req) | Q(description__icontains=search_req)), ).order_by('-date_create')
     else:
         all_transactions = Transaction.objects.filter(
-            is_visible=True).order_by('-date_create')
+            Q(is_visible=True) & Q(user=logged_user_id)).order_by('-date_create')
 
     transactions_count = all_transactions.count()
 
@@ -75,6 +77,7 @@ def add_transaction(request):
     if request.method == 'POST':
         form = transaction_form(request.POST)
         if form.is_valid():
+            form.instance.user_id = request.user
             form.save()
             return redirect('transactions')
 
@@ -87,9 +90,13 @@ def edit_transaction(request, id):
     transaction = Transaction.objects.get(id=id)
     form = transaction_form(instance=transaction)
 
+    if request.user.id != transaction.user.id:
+        return HttpResponse('not owner')
+
     if request.method == 'POST':
         form = transaction_form(request.POST, instance=transaction)
         if form.is_valid():
+            transaction.date_update = datetime.now()
             form.save()
             return redirect('transactions')
 
@@ -99,7 +106,12 @@ def edit_transaction(request, id):
 
 @login_required(login_url='login')
 def delete_transaction(request, id):
+
     transaction = Transaction.objects.get(id=id)
+
+    if request.user.id != transaction.user.id:
+        return HttpResponse('not owner')
+
     if request.method == 'POST':
         transaction.is_visible = False
         transaction.save()

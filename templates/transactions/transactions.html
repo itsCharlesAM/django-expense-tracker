@@ -35,7 +35,7 @@
             <a href="{% url 'delete_transaction' transaction.id %}">delete</a>
 
 
-            <span>User: {{transaction.user_id.username}}</span>
+            <span>User: {{transaction.user.username}}</span>
             <h5>{{transaction.id}} -- <a>{{transaction.description}}</a></h5>
         </div>
         {% endfor %}
