@@ -6,6 +6,7 @@ from .forms import transaction_form
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -38,9 +39,11 @@ def login_page(request):
 
 def logout_user(request):
     logout(request)
-    return render(request, 'login.html')
+    return redirect('login')
 
 
+# this will restrict the all_transactions page
+@login_required(login_url='login')
 def show_all_transactions(request):
     search_req = request.GET.get(
         'search',
@@ -65,6 +68,7 @@ def show_all_transactions(request):
     return render(request, 'transactions/transactions.html', transactions_context)
 
 
+@login_required(login_url='login')
 def add_transaction(request):
     form = transaction_form()
 
@@ -78,6 +82,7 @@ def add_transaction(request):
     return render(request, 'transactions/transaction_form.html', context)
 
 
+@login_required(login_url='login')
 def edit_transaction(request, id):
     transaction = Transaction.objects.get(id=id)
     form = transaction_form(instance=transaction)
@@ -92,6 +97,7 @@ def edit_transaction(request, id):
     return render(request, 'transactions/transaction_form.html', context)
 
 
+@login_required(login_url='login')
 def delete_transaction(request, id):
     transaction = Transaction.objects.get(id=id)
     if request.method == 'POST':
