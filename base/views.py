@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
 
 
@@ -16,7 +17,7 @@ def login_page(request):
     req_password = None
 
     if request.method == 'POST':
-        req_username = request.POST.get('username')
+        req_username = request.POST.get('username').lower()
         req_password = request.POST.get('password')
 
         try:
@@ -40,6 +41,24 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+def register_page(request):
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            login(request, user)  # log in the registered user
+            return redirect('transactions')
+        else:
+            messages.error(request, 'dddsfsfs')
+
+    context = {'form': form}
+    return render(request, 'register.html', context)
 
 
 # this will restrict the all_transactions page
@@ -77,7 +96,7 @@ def add_transaction(request):
     if request.method == 'POST':
         form = transaction_form(request.POST)
         if form.is_valid():
-            form.instance.user_id = request.user
+            form.instance.user = request.user
             form.save()
             return redirect('transactions')
 
