@@ -1,47 +1,20 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
-
-<h1>transactions template</h1>
-
-<div>
-
     <div>
-        <h3>Select transaction type</h3>
-        <hr>
+        <h5 style="text-align: center; margin-bottom: 20px;">Number of transactions: {{ transactions_count }}</h5>
+
+        <a href="{% url 'add_transaction' %}" style="display: block; text-align: center; margin-bottom: 20px; padding: 8px; background-color: #4caf50; color: #fff; text-decoration: none; border-radius: 4px;">Add Transaction</a>
 
         <div>
-            <div>
-                <a href="{% url 'transactions' %}">All</a>
-            </div>
+            {% for transaction in all_transactions %}
+                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                    <a href="{% url 'edit_transaction' transaction.id %}" style="margin-right: 10px; color: #4caf50; text-decoration: none;">Edit</a>
+                    <a href="{% url 'delete_transaction' transaction.id %}" style="color: #ff0000; text-decoration: none;">Delete</a>
 
-            <!-- {% for transaction in all_transactions %}
-            <div>
-                <a href="{% url 'transactions' %}?search={{transaction.type}}">{{transaction.get_type_display}}</a>
-                
+                    <h5 style="margin-top: 5px;">User: {{ transaction.user.username }} | ID: {{ transaction.id }} | Description: <a href="#">{{ transaction.description }}</a></h5>
+                </div>
             {% endfor %}
-            </div> -->
-        </div>        
-    </div>
-    <h5>Number of transactions: {{transactions_count}}</h5>
-
-    <a href="{% url 'add_transaction' %}">Add Transaction</a>
-
-    <div>
-        {% for transaction in all_transactions %}
-        <div>
-            <a href="{% url 'edit_transaction' transaction.id %}">Edit</a>
-            <a href="{% url 'delete_transaction' transaction.id %}">delete</a>
-
-            <h5>User: {{transaction.user.username}}-- id: {{transaction.id}} -- description: <a>{{transaction.description}}</a></h5>
         </div>
-        {% endfor %}
-
     </div>
-
-
-
-</div>
-
 {% endblock content %}

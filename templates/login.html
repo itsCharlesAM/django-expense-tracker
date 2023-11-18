@@ -1,26 +1,108 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 377px;
+            margin-left: -260px;
+            color: #555;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4caf50;
+            font-weight: bold;
+            margin-left: 1px;
+            margin-top: 359px;
+        }
+
+        a:hover {
+            color: #45a049;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            color: #ff0000;
+        }
+
+        .error {
+            font-weight: bold;
+        }
+    </style>
+    <title>Login Page</title>
+</head>
+<body>
     <form action="" method="POST">
         {% csrf_token %} 
 
         <!-- output the login error message -->
         {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tag %} class="{{ message.tag }}" {% endif %} > {{ message }}</li>
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tag %} class="{{ message.tag }}" {% endif %}>{{ message }}</li>
                 {% endfor %}
-        </ul>
+            </ul>
         {% endif %}
         <!---->
 
-        <label>Username:</label>
-        <input type="text" name="username" placeholder="Enter username">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" placeholder="Enter username" required>
 
-        <label>Password:</label>
-        <input type="password" name="password" placeholder="Enter password">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" placeholder="Enter password" required>
 
-        <input type="submit" value="login">
+        <input type="submit" value="Login">
     </form>
 
-    <p>Have not signed up yet?</p>
+    <p>Haven't signed up yet?</p>
     <a href="{% url 'register' %}">Sign up</a>
-</div>
+</body>
+</html>

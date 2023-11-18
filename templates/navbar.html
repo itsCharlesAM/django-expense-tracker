@@ -1,20 +1,86 @@
-<a href="/">
-    LOGO
-</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            /* display: flex; */
+            flex-direction: column;
+            align-items: center;
+        }
+        div{
+            padding: auto;
+        }
 
-<form method="GET" action="{% url 'transactions' %}">
-    <input type="text" name="search" placeholder="search transactions"/>
-</form>
+        h1 {
+            color: #333;
+            text-align: center;
+            margin: 20px 0;
+            text-decoration: none;
+            font-size: 24px;
+        }
 
-{% if request.user.is_authenticated %}
-<p>Hello {{request.user}}</p> <br>
-<p>Your balance: {{myUser.balance}}</p> <br>
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-<a href="{% url 'profile' request.user.id %}">Edit profile</a><br>
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-<a href="{% url 'logout' %}">Logout</a>
-{% else %}
-<a href="{% url 'login' %}">Login</a>
-{% endif %}
+        p {
+            text-align: center;
+            margin: 10px 0;
+            color: #555;
+        }
 
-<hr>
+        a {
+            text-decoration: none;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #45a049;
+        }
+
+        hr {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin: 20px 0;
+        }
+    </style>
+    <title>Expense Tracker</title>
+</head>
+<body>
+
+    <div class="all">
+        <h1><a href="/">Expense Tracker</a></h1>
+
+        <form method="GET" action="{% url 'transactions' %}">
+            <input type="text" name="search" placeholder="Search transactions"/>
+        </form>
+
+        {% if request.user.is_authenticated %}
+            <p>Hello {{ request.user }}</p>
+            <p>Your balance: {{ myUser.balance }}</p>
+
+            <a href="{% url 'profile' request.user.id %}">Edit profile</a><br>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+
+        <hr>
+    </div>
+</body>
+</html>
