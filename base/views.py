@@ -3,7 +3,8 @@ from django.db.models import Q
 from django.http import HttpResponse
 from .models import Transaction
 from .forms import transaction_form
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as auth_user
+from .models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +22,7 @@ def login_page(request):
         req_password = request.POST.get('password')
 
         try:
-            user = User.objects.get(username=req_username)
+            user = auth_user.objects.get(username=req_username)
         except:
             messages.error(request, 'User does not exist')
 
@@ -50,15 +51,31 @@ def register_page(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = user.username.lower()
-            user.save()
-            login(request, user)  # log in the registered user
+
+            myUser = User.objects.create(
+                username=user.username.lower(),
+                password=user.password,
+                balance=0, is_visible=True, date_create=datetime.now, date_update=None,
+            )
+
+            myUser.save()
+
+            login(request, myUser)  # log in the registered user
             return redirect('transactions')
         else:
-            messages.error(request, 'dddsfsfs')
+            messages.error(request, 'An error occured in user register')
 
     context = {'form': form}
     return render(request, 'register.html', context)
+
+
+@login_required(login_url='login')
+def user_profile(request, id):
+    user = auth_user.objects.get(id=id)
+
+    myUser = User.objects.get(user_ptr_id=id)
+    context = {'user': user, 'myUser': myUser}
+    return render(request, 'profile.html', context)
 
 
 # this will restrict the all_transactions page
