@@ -86,6 +86,7 @@ def show_all_transactions(request):
         'search',
     )
     logged_user_id = request.user.id
+    myUser = User.objects.get(user_ptr_id=logged_user_id)
 
     if str(search_req).__contains__("inc"):
         search_req = 1
@@ -102,18 +103,26 @@ def show_all_transactions(request):
     transactions_count = all_transactions.count()
 
     transactions_context = {
-        'all_transactions': all_transactions, 'transactions_count': transactions_count}
+        'all_transactions': all_transactions, 'transactions_count': transactions_count, 'myUser': myUser}
     return render(request, 'transactions/transactions.html', transactions_context)
 
 
 @login_required(login_url='login')
 def add_transaction(request):
     form = transaction_form()
+    user = User.objects.get(id=request.user.id)
 
     if request.method == 'POST':
         form = transaction_form(request.POST)
         if form.is_valid():
             form.instance.user = request.user
+
+            if form.instance.type == 1:
+                user.balance = user.balance + form.instance.amount
+            if form.instance.type == 2:
+                user.balance = user.balance - form.instance.amount
+
+            user.save()
             form.save()
             return redirect('transactions')
 
@@ -123,16 +132,24 @@ def add_transaction(request):
 
 @login_required(login_url='login')
 def edit_transaction(request, id):
+    user = User.objects.get(id=request.user.id)
     transaction = Transaction.objects.get(id=id)
     form = transaction_form(instance=transaction)
 
-    if request.user.id != transaction.user.id:
+    if user.id != transaction.user.id:
         return HttpResponse('not owner')
 
     if request.method == 'POST':
         form = transaction_form(request.POST, instance=transaction)
         if form.is_valid():
+            if transaction.type == 1:  # income
+                user.balance = user.balance + transaction.amount
+            if transaction.type == 2:  # expense
+                user.balance = user.balance - transaction.amount
+
             transaction.date_update = datetime.now()
+            user.date_update = datetime.now()
+            user.save()
             form.save()
             return redirect('transactions')
 
