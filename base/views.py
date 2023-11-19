@@ -159,6 +159,7 @@ def edit_transaction(request, id):
 
 @login_required(login_url='login')
 def delete_transaction(request, id):
+    user = User.objects.get(id=request.user.id)
 
     transaction = Transaction.objects.get(id=id)
 
@@ -167,6 +168,12 @@ def delete_transaction(request, id):
 
     if request.method == 'POST':
         transaction.is_visible = False
+        if transaction.type == 1:  # income
+            user.balance = user.balance - transaction.amount
+        if transaction.type == 2:  # expence
+            user.balance = user.balance + transaction.amount
+
+        user.save()
         transaction.save()
         return redirect('transactions')
 
