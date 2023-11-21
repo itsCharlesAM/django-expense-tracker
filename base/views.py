@@ -104,30 +104,32 @@ def show_all_transactions(request):
 
     transactions_context = {
         'all_transactions': all_transactions, 'transactions_count': transactions_count, 'myUser': myUser}
-    return render(request, 'transactions/transactions.html', transactions_context)
+    return render(request, 'index.html', transactions_context)
 
 
 @login_required(login_url='login')
 def add_transaction(request):
-    form = transaction_form()
-    user = User.objects.get(id=request.user.id)
+    logged_user = User.objects.filter(id=request.user.id).first()
 
     if request.method == 'POST':
-        form = transaction_form(request.POST)
-        if form.is_valid():
-            form.instance.user = request.user
+        req_amount = request.POST.get('amount')
+        req_description = request.POST.get('description')
+        req_type = request.POST.get('type')
 
-            if form.instance.type == 1:
-                user.balance = user.balance + form.instance.amount
-            if form.instance.type == 2:
-                user.balance = user.balance - form.instance.amount
+        if req_type == "1":
+            logged_user.balance = logged_user.balance + int(req_amount)
+        if req_type == "2":
+            logged_user.balance = logged_user.balance - int(req_amount)
 
-            user.save()
-            form.save()
-            return redirect('transactions')
+        logged_user.save()
 
-    context = {'form': form}
-    return render(request, 'transactions/transaction_form.html', context)
+        new_transaction = Transaction.objects.create(
+            amount=req_amount, type=req_type, description=req_description, user=logged_user,
+        )
+        new_transaction.save()
+        return redirect('index')
+
+    return render(request, 'index.html')
 
 
 @login_required(login_url='login')
@@ -166,18 +168,17 @@ def delete_transaction(request, id):
     if request.user.id != transaction.user.id:
         return HttpResponse('not owner')
 
-    if request.method == 'POST':
-        transaction.is_visible = False
-        if transaction.type == 1:  # income
-            user.balance = user.balance - transaction.amount
-        if transaction.type == 2:  # expence
-            user.balance = user.balance + transaction.amount
+    print(request)
 
-        user.save()
-        transaction.save()
-        return redirect('transactions')
+    transaction.is_visible = False
+    if transaction.type == 1:  # income
+        user.balance = user.balance - transaction.amount
+    if transaction.type == 2:  # expence
+        user.balance = user.balance + transaction.amount
 
-    return render(request, 'transactions/delete.html', {'obj': transaction})
+    user.save()
+    transaction.save()
+    return redirect('transactions')
 
 
 def home(request):

@@ -9,6 +9,9 @@ urlpatterns = [
     path('register/', views.register_page, name='register'),
     path('profile/<str:id>', views.user_profile, name='profile'),
 
+    path('index/',
+         views.show_all_transactions, name="index"),
+
     path('', views.home, name="home"),
     path('all_transactions/',
          views.show_all_transactions, name="transactions"),
