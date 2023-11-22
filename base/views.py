@@ -119,21 +119,25 @@ def add_transaction(request):
     logged_user = User.objects.filter(id=request.user.id).first()
 
     if request.method == 'POST':
-        req_amount = request.POST.get('amount')
-        req_description = request.POST.get('description')
-        req_type = request.POST.get('type')
+        if request.POST.get('amount') == '':
 
-        if req_type == "1":
-            logged_user.balance = logged_user.balance + int(req_amount)
-        if req_type == "2":
-            logged_user.balance = logged_user.balance - int(req_amount)
+            return redirect('index')
+        else:
+            req_amount = request.POST.get('amount')
+            req_description = request.POST.get('description')
+            req_type = request.POST.get('type')
 
-        logged_user.save()
+            if req_type == "1":
+                logged_user.balance = logged_user.balance + int(req_amount)
+            if req_type == "2":
+                logged_user.balance = logged_user.balance - int(req_amount)
 
-        new_transaction = Transaction.objects.create(
-            amount=req_amount, type=req_type, description=req_description, user=logged_user,
-        )
-        new_transaction.save()
+            logged_user.save()
+
+            new_transaction = Transaction.objects.create(
+                amount=req_amount, type=req_type, description=req_description, user=logged_user,
+            )
+            new_transaction.save()
         return redirect('index')
 
     return render(request, 'index.html')
