@@ -140,30 +140,35 @@ def add_transaction(request):
 
 
 @login_required(login_url='login')
-def edit_transaction(request, id):
+def edit_transaction(request):
     user = User.objects.get(id=request.user.id)
-    transaction = Transaction.objects.get(id=id)
-    form = transaction_form(instance=transaction)
-
-    if user.id != transaction.user.id:
-        return HttpResponse('not owner')
 
     if request.method == 'POST':
-        form = transaction_form(request.POST, instance=transaction)
-        if form.is_valid():
-            if transaction.type == 1:  # income
-                user.balance = user.balance + transaction.amount
-            if transaction.type == 2:  # expense
-                user.balance = user.balance - transaction.amount
+        transaction = Transaction.objects.get(id=request.POST.get('id'))
+        if user.id != transaction.user.id:
+            return HttpResponse('not owner')
 
-            transaction.date_update = datetime.now()
-            user.date_update = datetime.now()
-            user.save()
-            form.save()
-            return redirect('transactions')
+        req_amount = request.POST.get('amount')
+        req_description = request.POST.get('description')
+        req_type = request.POST.get('type')
 
-    context = {'form': form}
-    return render(request, 'transactions/transaction_form.html', context)
+        if req_type == "1":  # income
+            user.balance = user.balance + transaction.amount
+        if req_type == "2":  # expense
+            user.balance = user.balance - transaction.amount
+
+        transaction.amount = req_amount
+        transaction.description = req_description
+        transaction.type = req_type
+        transaction.date_update = datetime.now()
+
+        user.date_update = datetime.now()
+
+        user.save()
+        transaction.save()
+        return redirect('index')
+
+    return render(request, 'index.html')
 
 
 @login_required(login_url='login')

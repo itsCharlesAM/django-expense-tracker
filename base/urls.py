@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('add_transaction/', views.add_transaction, name="add_transaction"),
 
-    path('edit_transaction/<str:id>',
+    path('edit_transaction',
          views.edit_transaction, name="edit_transaction"),
 
     path('delete_transaction/<str:id>',
