@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse
 from .models import Transaction
 from .forms import transaction_form
@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
-# Create your views here.
 
 
 def login_page(request):
@@ -102,8 +101,16 @@ def show_all_transactions(request):
 
     transactions_count = all_transactions.count()
 
+    sum_income = Transaction.objects.filter(
+        Q(is_visible=True) & Q(type=1)).aggregate(total_income=Sum('amount'))
+    total_income = sum_income.get('total_income', 0)
+
+    sum_expense = Transaction.objects.filter(
+        Q(is_visible=True) & Q(type=2)).aggregate(total_expense=Sum('amount'))
+    total_expense = sum_expense.get('total_expense', 0)
+
     transactions_context = {
-        'all_transactions': all_transactions, 'transactions_count': transactions_count, 'myUser': myUser}
+        'all_transactions': all_transactions, 'transactions_count': transactions_count, 'myUser': myUser, 'total_income': total_income, 'total_expense': total_expense}
     return render(request, 'index.html', transactions_context)
 
 
