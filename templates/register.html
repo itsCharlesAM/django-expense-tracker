@@ -1,13 +1,68 @@
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+    div {
+        max-width: 300px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form {
+        margin-bottom: 15px;
+    }
+
+    label {
+        text-align: left;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="submit"] {
+        background-color: #4caf50;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    p {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    a {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        color: #007bff;
+        margin-top: 10px;
+    }
+</style>
+<title>Sign Up</title>
 <div>
+    <h1 style="text-align: center;">Sign up</h1>
     <form action="" method="POST">
         {% csrf_token %} 
 
-        {{form.as_p}}
+        {{ form.as_p }}
 
-
-        <input type="submit" value="register">
+        <input type="submit" value="Register">
     </form>
     <p>Already signed up?</p>
     <a href="{% url 'login' %}">Log in</a>
-
 </div>

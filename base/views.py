@@ -102,11 +102,11 @@ def show_all_transactions(request):
     transactions_count = all_transactions.count()
 
     sum_income = Transaction.objects.filter(
-        Q(is_visible=True) & Q(type=1)).aggregate(total_income=Sum('amount'))
+        Q(is_visible=True) & Q(user=logged_user_id) & Q(type=1)).aggregate(total_income=Sum('amount'))
     total_income = sum_income.get('total_income', 0)
 
     sum_expense = Transaction.objects.filter(
-        Q(is_visible=True) & Q(type=2)).aggregate(total_expense=Sum('amount'))
+        Q(is_visible=True) & Q(user=logged_user_id) & Q(type=2)).aggregate(total_expense=Sum('amount'))
     total_expense = sum_expense.get('total_expense', 0)
 
     transactions_context = {
